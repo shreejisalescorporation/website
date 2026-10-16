@@ -29,6 +29,60 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
+
+  if (!document.querySelector(".floating-contact")) {
+    const floatingContact = document.createElement("div");
+    floatingContact.classList.add("footer-socials", "floating-contact");
+    floatingContact.setAttribute("role", "group");
+    floatingContact.setAttribute("aria-label", "Quick contact");
+
+    const contactLinks = [
+      ["mailto:shreejisalescorp.in@gmail.com", "Email shreejisalescorp.in@gmail.com", "fas fa-envelope"],
+      ["tel:+919427020838", "Call +91 94270 20838", "fas fa-phone"],
+      ["https://wa.me/919427020838", "WhatsApp +91 94270 20838", "fab fa-whatsapp"]
+    ];
+
+    contactLinks.forEach(([href, label, iconClass]) => {
+      const link = document.createElement("a");
+      const icon = document.createElement("i");
+      link.href = href;
+      link.setAttribute("aria-label", label);
+      link.title = label;
+      icon.className = iconClass;
+      icon.setAttribute("aria-hidden", "true");
+      link.appendChild(icon);
+      floatingContact.appendChild(link);
+    });
+
+    document.body.appendChild(floatingContact);
+  }
+
+  if (navLinks) {
+    const navigationItems = [
+      ["/faq/", "FAQs"],
+      ["/contact/", "Contact"]
+    ];
+
+    navigationItems.forEach(([href, label]) => {
+      if (navLinks.querySelector(`a[href="${href}"]`)) {
+        return;
+      }
+
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = href;
+      link.textContent = label;
+      item.appendChild(link);
+
+      const aboutLink = navLinks.querySelector('a[href="/about/"]');
+      if (aboutLink && href === "/faq/") {
+        aboutLink.parentElement.before(item);
+      } else {
+        navLinks.querySelector("ul")?.appendChild(item);
+      }
+    });
+  }
+
   document.querySelectorAll(".nav-links a").forEach((link) => {
     const href = link.getAttribute("href");
     if (!href) {

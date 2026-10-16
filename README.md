@@ -3,7 +3,7 @@
 
 Welcome to the official website repository of **Shreeji Sales Corporation**, a leading plywood wholesaler based in Ahmedabad.
 
-This website serves as a digital portfolio for the company and allows users to send business inquiries directly via a contact form integrated with SMTP.
+This website serves as a digital portfolio for the company and uses Brevo transactional email to deliver business inquiries.
 
 ---
 
@@ -18,12 +18,44 @@ This website serves as a digital portfolio for the company and allows users to s
 ## 🚀 Features
 
 - 🖼️ Company Portfolio Showcase
-- 📬 Contact Form with SMTP-based Email Delivery
+- 📬 Contact Form with Brevo Email Delivery
 - 📱 Responsive Design (Mobile + Desktop)
 - ⚡ Fast Page Load and Clean UI
 - 🔒 Form Validation and Basic Spam Protection
 
 ---
+
+## 📧 Brevo Email Configuration
+
+Configure these environment variables on the Flask API host:
+
+- `BREVO_API_KEY`: Brevo API key with transactional email permissions.
+- `BREVO_SENDER_EMAIL`: A sender address verified in Brevo.
+- `BREVO_SENDER_NAME`: Optional sender display name (defaults to `Shreeji Sales Corporation`).
+- `INQUIRY_RECEIVER_EMAIL`: Optional sales inbox (defaults to `shreejisalescorp.in@gmail.com`).
+- `RECAPTCHA_SECRET_KEY`: The production reCAPTCHA secret. The legacy `secretkeycap` variable remains supported for existing deployments.
+- `TRUSTED_PROXY_COUNT`: Number of trusted reverse proxies in front of the API. Defaults to `0`; set this only to the verified proxy count so forwarded client IPs are not accepted from arbitrary callers.
+- `LOCAL_RECAPTCHA_TEST_SECRET`: Optional local-only secret. It is used only when the direct client connection is loopback; configure it locally and never commit it.
+
+The API sends the inquiry to the sales inbox first. It sends the customer confirmation only after Brevo accepts the sales notification. Do not commit the API key to source control.
+
+## 🚀 Production API
+
+Run the API with the production WSGI server rather than Flask's development server:
+
+```sh
+gunicorn --bind 0.0.0.0:$PORT app:app
+```
+
+The API's in-process inquiry throttle is per worker and is intended as a secondary control. Keep the hosting platform's edge/WAF rate limits enabled for production traffic. The `/healthz` endpoint is a lightweight liveness check; it does not prove that Brevo or reCAPTCHA is reachable.
+
+The static site and Flask API are separate deployment surfaces. Configure security response headers at the static hosting/CDN layer as well as on the Flask API; Flask headers do not protect pages served directly by GitHub Pages or another static host.
+
+## ✅ Local checks
+
+```sh
+python -m unittest discover -s tests -v
+```
 
 ---
 
@@ -40,5 +72,5 @@ This website was developed by [Priyan Bhatt](https://github.com/priyanbhatt), in
 ---
 
 For any issues or feature requests, please contact:
-📧 **shreejisalescorp@gmail.com**
+📧 **shreejisalescorp.in@gmail.com**
 ```
