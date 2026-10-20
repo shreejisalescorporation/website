@@ -51,6 +51,8 @@ The API's in-process inquiry throttle is per worker and is intended as a seconda
 
 The static site and Flask API are separate deployment surfaces. Configure security response headers at the static hosting/CDN layer as well as on the Flask API; Flask headers do not protect pages served directly by GitHub Pages or another static host.
 
+The API accepts inquiry submissions from `shreejisalescorp.in`, `www.shreejisalescorp.in`, `api.shreejisalescorp.in`, and the configured GitHub Pages origin. The API hostname is allowed because the Flask service also serves the contact page there.
+
 ## ✅ Local checks
 
 ```sh

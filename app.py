@@ -77,6 +77,7 @@ ROOT_STATIC_FILES = {
 ALLOWED_ORIGINS = {
     "https://shreejisalescorp.in",
     "https://www.shreejisalescorp.in",
+    "https://api.shreejisalescorp.in",
     "https://priyanbhatt.github.io",
 }
 PRODUCT_CHOICES = {

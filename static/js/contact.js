@@ -174,6 +174,15 @@ document.addEventListener("DOMContentLoaded", () => {
     responseMessage.textContent = "";
     delete responseMessage.dataset.state;
 
+    const messageField = form.querySelector("#message");
+    if (messageField) {
+      messageField.setCustomValidity(
+        messageField.value.trim().length < 5
+          ? "Please enter a message with at least 5 non-whitespace characters."
+          : "",
+      );
+    }
+
     if (!form.reportValidity()) {
       return;
     }

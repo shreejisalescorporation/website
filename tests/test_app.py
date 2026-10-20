@@ -145,6 +145,36 @@ class InquiryAppTests(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
+    def test_api_domain_origin_is_allowed_for_contact_page(self):
+        origin = "https://api.shreejisalescorp.in"
+        response = self.client.post(
+            "/send_inquiry",
+            data={},
+            headers={"Origin": origin},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers["Access-Control-Allow-Origin"], origin)
+
+    def test_inquiry_rejects_messages_shorter_than_five_non_whitespace_characters(self):
+        form = {
+            "name": "Test User",
+            "email": "customer@example.com",
+            "phone": "+91 98765 43210",
+            "city": "Ahmedabad",
+            "g-recaptcha-response": "test-token",
+        }
+        for message in ("", "Help", "     "):
+            with self.subTest(message=message):
+                response = self.client.post(
+                    "/send_inquiry",
+                    data={**form, "message": message},
+                )
+                self.assertEqual(response.status_code, 400)
+                self.assertEqual(
+                    response.json["message"],
+                    "Please provide a valid message.",
+                )
+
     def test_inquiry_fields_reject_control_characters(self):
         with app.test_request_context("/", method="POST", data={"name": "name\r\nBcc: victim@example.com"}):
             with self.assertRaises(ValueError):
